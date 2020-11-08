@@ -10,9 +10,6 @@ const baseUrlForecast5 = "https://openweathermap.org/data/2.5/forecast";
 const baseUrlAllWeather = "https://api.openweathermap.org/data/2.5/onecall";
 const exclude = '&exclude=minutely,alerts';
 
-let lat;
-let lon;
-
 class Weather {
 
     async getCoords(zipCode, tempMetric) {
@@ -60,7 +57,7 @@ class Weather {
                 console.log(res.status);
             }
             currentWeatherETL.setData(res.data);
-            let weatherData =  currentWeatherETL.getCurrentWeather()
+            let weatherData =  currentWeatherETL.getCurrentWeather();
 
             return weatherData;
         } 
@@ -73,24 +70,26 @@ class Weather {
 
         let weatherData = await this.getCoords(zipCode, tempMetric);
 
-        lat = weatherData.coord.lat;
-        lon = weatherData.coord.lon
-        let cityName = {
-            city: weatherData.name
-        };
+        let lat = weatherData.coord.lat;
+        let lon = weatherData.coord.lon
+        
+        let tempWeather = {
+            city: weatherData.name, 
+            country: weatherData.sys.country,
+            temp_min: weatherData.main.temp_min, 
+            temp_max: weatherData.main.temp_max
+        }
 
         let url = `${baseUrlAllWeather}?lat=${lat}&lon=${lon}&units=${tempMetric}${exclude}&appid=${process.env.WEATHER_KEY}`;
 
         try {
             let res = await axios(url);
-            let response = {
-                ...cityName,
-                ...res.data
-            }
             if (res.status !== 200) {
                 console.log(res.status);
             }
-            return response;
+            currentWeatherETL.setData(res.data, tempWeather);
+            let currentWeather = currentWeatherETL.getCurrentWeather();
+            return currentWeather;
         }
         catch (err) {
             console.error(err);

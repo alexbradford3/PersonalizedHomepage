@@ -26,15 +26,15 @@ var currentWeather = {
     }
 };
 
-async function setData(data) {
-    currentTime = new Date(data.dt * 1000);
-    sunriseTime = new Date(data.sys.sunrise * 1000);
-    sunsetTime = new Date(data.sys.sunset * 1000);
+async function setData(data, weatherObject) {
+    currentTime = new Date(data.current.dt * 1000);
+    sunriseTime = new Date(data.current.sunrise * 1000);
+    sunsetTime = new Date(data.current.sunset * 1000);
 
-    currentWeather.location.city = data.name;
-    currentWeather.location.country = data.sys.country;
-    currentWeather.location.lat = data.coord.lat;
-    currentWeather.location.lon = data.coord.lon;
+    currentWeather.location.city = weatherObject.city;
+    currentWeather.location.country = weatherObject.country;
+    currentWeather.location.lat = data.lat;
+    currentWeather.location.lon = data.lon;
     currentWeather.time.time = `${(hours12(currentTime)).toString()}:${currentTime.getMinutes().toString()} ${currentTime.getHours() < 11 ? "AM" : "PM"}`;
     switch (currentTime.getTimezoneOffset()/60) {
         case (5):
@@ -50,21 +50,28 @@ async function setData(data) {
             currentWeather.time.timezone = "PST";
             break;
     }
-    currentWeather.temp.temperature = Math.round(data.main.temp);
-    currentWeather.temp.feelsLike = Math.round(data.main.feels_like);
-    currentWeather.weather.description = upperCaseString(data.weather[0].description);
-    currentWeather.weather.id = data.weather[0].id;
+    currentWeather.temp.temperature = Math.round(data.current.temp);
+    currentWeather.temp.feelsLike = Math.round(data.current.feels_like);
+    currentWeather.weather.description = upperCaseString(data.current.weather[0].description);
+    currentWeather.weather.id = data.current.weather[0].id;
+    
+    //Calculate rain percentage here
     currentWeather.weather.rainPercentage = 0;
-    currentWeather.temp.tempMin = Math.round(data.main.temp_min);
-    currentWeather.temp.tempMax = Math.round(data.main.temp_max);
+
+    currentWeather.temp.tempMin = Math.round(weatherObject.temp_min);
+    currentWeather.temp.tempMax = Math.round(weatherObject.temp_max);
     currentWeather.time.sunrise = `${(hours12(sunriseTime)).toString()}:${sunriseTime.getMinutes().toString()} ${sunriseTime.getHours() < 11 ? "AM" : "PM"}`;
     currentWeather.time.sunset = `${(hours12(sunsetTime)).toString()}:${sunsetTime.getMinutes().toString()} ${sunsetTime.getHours() < 11 ? "AM" : "PM"}`;
-    currentWeather.weather.windSpeed = `${data.wind.speed} m/s`;
+    currentWeather.weather.windSpeed = `${data.current.wind_speed} m/s`;
     (currentTime.getTime() < sunriseTime.getTime() || currentTime.getTime() > sunsetTime.getTime()) ? currentWeather.time.timeOfDay = "night" : currentWeather.time.timeOfDay = "day";
 }
 
 async function getCurrentWeather() {
     return currentWeather;
+}
+
+function calculateAverageRainPercentage(date) {
+
 }
 
 function upperCaseString(string) {
