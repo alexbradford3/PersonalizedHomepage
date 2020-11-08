@@ -1,5 +1,6 @@
 
 let weatherData = {};
+let units;
 
 function setFooterText() {
     var node = document.createElement("p");
@@ -14,7 +15,6 @@ document.querySelector('#submit-weather').addEventListener('click', function(eve
     
     var zipCode = document.forms["weather-form"]["zip-code"].value;
     const radioButtons = document.querySelectorAll('input[name="unit-radios"]');
-    let units;
     for (const button of radioButtons) {
         if (button.checked) {
             units = button.value;
@@ -98,7 +98,7 @@ function buildWeatherContainer(data) {
 
     createHTMLElement('h4', `${weatherData.city}, ${weatherData.country} Weather`, currentWeatherSummaryDiv);
     createHTMLElement('h6', `as of ${weatherData.time} ${weatherData.timezone}`, currentWeatherSummaryDiv);
-    createHTMLElement('h1', `${weatherData.temperature}°`, currentWeatherSummaryDiv, 'temperature');
+    createHTMLElement('h1', `${weatherData.temperature}°${units == "Imperial" ? "F" : "C"}`, currentWeatherSummaryDiv, 'temperature');
     createHTMLElement('h3', `${weatherData.description}`, currentWeatherSummaryDiv);
     (weatherData.rainPercentage) ? createHTMLElement('p', `5% chance of rain through 4pm`, currentWeatherSummaryDiv) : null;
 
@@ -106,8 +106,8 @@ function buildWeatherContainer(data) {
     node.setAttribute('class', `fa-2x wi wi-owm-${weatherData.dayOrNight}-${data.weather[0].id}`);
     currentWeatherIcon.appendChild(node);
     
-    createHTMLElement('h5', `${weatherData.tempMin}° / ${weatherData.tempMax}°`, currentWeatherDiv);
-    createHTMLElement('h5', `Feels like: ${weatherData.feelsLike}°`, currentWeatherDiv);
+    createHTMLElement('h5', `${weatherData.tempMin}°${units == "Imperial" ? "F" : "C"} / ${weatherData.tempMax}°${units == "Imperial" ? "F" : "C"}`, currentWeatherDiv);
+    createHTMLElement('h5', `Feels like: ${weatherData.feelsLike}°${units == "Imperial" ? "F" : "C"}`, currentWeatherDiv);
     createHTMLElement('p', `Sunrise: ${weatherData.sunrise}`, currentWeatherDiv);
     createHTMLElement('p', `Sunset: ${weatherData.sunset}`, currentWeatherDiv,);
     createHTMLElement('p', `Wind Speed: ${weatherData.windSpeed}`, currentWeatherDiv,);
