@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %> 
+</head>
+<body class="container">
+    <header>
+        <%- include('../partials/header'); %> 
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="row justify-content-center">
+                <form name="weather-form" id="weather-form">
+                    <div class="form-group">
+                      <label for="zipCode">Zip Code</label>
+                      <input type="number" class="form-control" id="zip-code" aria-describedby="zipCodeEntry" placeholder="Enter Zip Code">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="unit-radios" id="imperial-button" value="Imperial" checked>
+                        <label class="form-check-label" for="imperialButton">
+                          Imperial Units
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="unit-radios" id="metric-button" value="Metric">
+                        <label class="form-check-label" for="metricButton">
+                          Metric Units
+                        </label>
+                    </div>
+                    <button id="submit-weather" type="submit" class="btn btn-primary">Get Weather</button>
+                  </form>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+    <script src="/js/index.js"></script>
+    
+</body>
+</html>

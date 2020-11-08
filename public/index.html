@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather</title>
+
+    <!-- CSS (load bootstrap from CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="stylesheet" href="/public/css/weather-icons.min.css">
+</head>
+<body class="container">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <a class="navbar-brand" href="#">Personal Homepage</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="#">Weather <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Transit</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="row justify-content-center">
+              <form name="weather-form" id="weather-form">
+                  <div class="flex-container flex-row">
+                    <div>
+                      <input type="number" class="form-control" id="zip-code" aria-describedby="zipCodeEntry" placeholder="Enter Zip Code">
+                    </div>
+                    <div class="flex-container flex-col">
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="unit-radios" id="imperial-button" value="Imperial" checked>
+                        <label class="form-check-label" for="imperialButton">
+                          Imperial
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="unit-radios" id="metric-button" value="Metric">
+                        <label class="form-check-label" for="metricButton">
+                          Metric
+                        </label>
+                      </div> 
+                    </div>
+                    <div>
+                      <button id="submit-weather" type="submit" class="btn btn-primary">Get Weather</button>
+                    </div>
+                  </div>
+                </form>
+            </div>
+
+            <div class="row" id="current-weather-container" class="flex-container">
+              <div class="col-xs-12 col-md-6 current-weather">
+                <div class="current-weather-summary centered-text">
+                  
+                </div>
+              </div>
+              <div class="col-xs-12 col-md-6 current-weather">
+                <div id="current-weather-icon" class="centered-text"></div>
+                <div id="current-weather-abbrev-details" class="centered-text">
+                  
+                </div>
+              </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p id="footer" class="text-center text-muted"></p>
+    </footer>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/public/js/main.js"></script>
+    
+</body>
+</html>
