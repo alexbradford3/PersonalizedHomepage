@@ -30,49 +30,6 @@ document.querySelector('#submit-weather').addEventListener('click', function(eve
     document.querySelector('#weather-form').reset();
 });
 
-function extractWeatherData(data) {
-    var currentDate = new Date(data.dt * 1000);
-    var sunrise = new Date(data.sys.sunrise * 1000);
-    var sunset = new Date(data.sys.sunset * 1000);
-
-    weatherData.city = data.name;
-    weatherData.country = data.sys.country;
-    weatherData.time = `${(currentDate.getHours()%12).toString()}:${currentDate.getMinutes().toString()} ${currentDate.getHours() < 11 ? "AM" : "PM"}`;
-    switch (currentDate.getTimezoneOffset()/60) {
-        case (5):
-            weatherData.timezone = "EST";
-            break;
-        case (6):
-            weatherData.timezone = "CST";
-            break;
-        case (7):
-            weatherData.timezone = "MST";
-            break;
-        case (8):
-            weatherData.timezone = "PST";
-            break;
-    }
-    weatherData.temperature = Math.round(data.main.temp);
-    weatherData.feelsLike = Math.round(data.main.feels_like);
-    weatherData.description = upperCaseString(data.weather[0].description);
-    weatherData.rainPercentage = 0;
-    weatherData.tempMin = Math.round(data.main.temp_min);
-    weatherData.tempMax = Math.round(data.main.temp_max);
-    weatherData.sunrise = `${(sunrise.getHours()%12).toString()}:${sunrise.getMinutes().toString()} ${sunrise.getHours() < 11 ? "AM" : "PM"}`;
-    weatherData.sunset = `${(sunset.getHours()%12).toString()}:${sunset.getMinutes().toString()} ${sunset.getHours() < 11 ? "AM" : "PM"}`;
-    weatherData.windSpeed = `${data.wind.speed} m/s`;
-    (currentDate.getTime() < sunrise.getTime() || currentDate.getTime() > sunset.getTime()) ? weatherData.dayOrNight = "night" : weatherData.dayOrNight = "day";
-}
-
-function upperCaseString(string) {
-    var stringArr = string.split(" ");
-
-    for (var i = 0; i < stringArr.length; i++) {
-        stringArr[i] = stringArr[i].charAt(0).toUpperCase() + stringArr[i].slice(1);
-    }
-    return stringArr.join(' ');
-}
-
 function clearWeatherData() {
     document.querySelector('#current-weather-container').classList.remove('blueBackground');
     var currentWeatherSummaryDiv = document.querySelector('.current-weather-summary');
@@ -90,27 +47,29 @@ function removeAllChildNodes(parentNodes) {
     }
 }
 
-function buildWeatherContainer(data) {
+function buildWeatherContainer(weatherData) {
+    // console.log(`Weather: ${weatherData.time.timeOfDay}`);
+    // console.log(typeof(weatherData));
     document.querySelector('#current-weather-container').classList.add('blueBackground');
     var currentWeatherSummaryDiv = document.querySelector('.current-weather-summary');
     var currentWeatherIcon = document.querySelector('#current-weather-icon');
     var currentWeatherDiv = document.querySelector('#current-weather-abbrev-details');
 
-    createHTMLElement('h4', `${weatherData.city}, ${weatherData.country} Weather`, currentWeatherSummaryDiv);
-    createHTMLElement('h6', `as of ${weatherData.time} ${weatherData.timezone}`, currentWeatherSummaryDiv);
-    createHTMLElement('h1', `${weatherData.temperature}°${units == "Imperial" ? "F" : "C"}`, currentWeatherSummaryDiv, 'temperature');
-    createHTMLElement('h3', `${weatherData.description}`, currentWeatherSummaryDiv);
-    (weatherData.rainPercentage) ? createHTMLElement('p', `5% chance of rain through 4pm`, currentWeatherSummaryDiv) : null;
+    createHTMLElement('h4', `${weatherData.location.city}, ${weatherData.location.country} Weather`, currentWeatherSummaryDiv);
+    createHTMLElement('h6', `as of ${weatherData.time.time} ${weatherData.time.timezone}`, currentWeatherSummaryDiv);
+    createHTMLElement('h1', `${weatherData.temp.temperature}°${units == "Imperial" ? "F" : "C"}`, currentWeatherSummaryDiv, 'temperature');
+    createHTMLElement('h3', `${weatherData.weather.description}`, currentWeatherSummaryDiv);
+    (weatherData.weather.rainPercentage) ? createHTMLElement('p', `5% chance of rain through 4pm`, currentWeatherSummaryDiv) : null;
 
     var node = document.createElement('span');
-    node.setAttribute('class', `fa-2x wi wi-owm-${weatherData.dayOrNight}-${data.weather[0].id}`);
+    node.setAttribute('class', `fa-2x wi wi-owm-${weatherData.time.timeOfDay}-${weatherData.weather.id}`);
     currentWeatherIcon.appendChild(node);
     
-    createHTMLElement('h5', `${weatherData.tempMin}°${units == "Imperial" ? "F" : "C"} / ${weatherData.tempMax}°${units == "Imperial" ? "F" : "C"}`, currentWeatherDiv);
-    createHTMLElement('h5', `Feels like: ${weatherData.feelsLike}°${units == "Imperial" ? "F" : "C"}`, currentWeatherDiv);
-    createHTMLElement('p', `Sunrise: ${weatherData.sunrise}`, currentWeatherDiv);
-    createHTMLElement('p', `Sunset: ${weatherData.sunset}`, currentWeatherDiv,);
-    createHTMLElement('p', `Wind Speed: ${weatherData.windSpeed}`, currentWeatherDiv,);
+    createHTMLElement('h5', `${weatherData.temp.tempMin}°${units == "Imperial" ? "F" : "C"} / ${weatherData.temp.tempMax}°${units == "Imperial" ? "F" : "C"}`, currentWeatherDiv);
+    createHTMLElement('h5', `Feels like: ${weatherData.temp.feelsLike}°${units == "Imperial" ? "F" : "C"}`, currentWeatherDiv);
+    createHTMLElement('p', `Sunrise: ${weatherData.time.sunrise}`, currentWeatherDiv);
+    createHTMLElement('p', `Sunset: ${weatherData.time.sunset}`, currentWeatherDiv,);
+    createHTMLElement('p', `Wind Speed: ${weatherData.weather.windSpeed}`, currentWeatherDiv,);
 }
 
 function createHTMLElement(element, textValue, root, id) {
@@ -124,7 +83,7 @@ function createHTMLElement(element, textValue, root, id) {
 }
 
 function displayWeather(data) {
-    extractWeatherData(data);
+    // extractWeatherData(data);
     buildWeatherContainer(data); 
 }
 
