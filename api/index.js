@@ -12,20 +12,19 @@ router.get("/weather",  async (req, res) => {
     res.send(JSON.stringify(weatherData, null, 4));
 });
 
+// router.post("/weather",  async (req, res) => {
+//     const {zipCode, tempMetric} = req.body;
+//     let weather = new Weather();
+    
+//     let weatherData = await weather.getWeatherData(zipCode, tempMetric);
+//     res.send(JSON.stringify(weatherData, null, 4));
+// });
+
 router.post("/weather",  async (req, res) => {
     const {zipCode, tempMetric} = req.body;
     let weather = new Weather();
     
-    let weatherData = await weather.getWeatherData(zipCode, tempMetric);
-    res.send(JSON.stringify(weatherData, null, 4));
-});
-
-router.get("/all",  async (req, res) => {
-    let weather = new Weather();
-    
-    let weatherData = await weather.getWeatherDataAll('02127', "imperial");
-
-    res.header("Content-Type",'application/json');
+    let weatherData = await weather.getWeatherDataAll(zipCode, tempMetric);
     res.send(JSON.stringify(weatherData, null, 4));
 });
 
