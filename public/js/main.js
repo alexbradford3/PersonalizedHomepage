@@ -59,7 +59,7 @@ function buildWeatherContainer(weatherData) {
     createHTMLElement('h6', `as of ${weatherData.time.time} ${weatherData.time.timezone}`, currentWeatherSummaryDiv);
     createHTMLElement('h1', `${weatherData.temp.temperature}°${units == "Imperial" ? "F" : "C"}`, currentWeatherSummaryDiv, 'temperature');
     createHTMLElement('h3', `${weatherData.weather.description}`, currentWeatherSummaryDiv);
-    (weatherData.weather.rainPercentage) ? createHTMLElement('p', `5% chance of rain through 4pm`, currentWeatherSummaryDiv) : null;
+    (weatherData.weather.rainPercentage) ? createHTMLElement('p', `${weatherData.weather.rainPercentage}% chance of rain today`, currentWeatherSummaryDiv) : null;
 
     var node = document.createElement('span');
     node.setAttribute('class', `fa-2x wi wi-owm-${weatherData.time.timeOfDay}-${weatherData.weather.id}`);
