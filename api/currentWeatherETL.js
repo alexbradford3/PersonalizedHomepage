@@ -54,10 +54,7 @@ async function setData(data, weatherObject) {
     currentWeather.temp.feelsLike = Math.round(data.current.feels_like);
     currentWeather.weather.description = upperCaseString(data.current.weather[0].description);
     currentWeather.weather.id = data.current.weather[0].id;
-    
-    //Calculate rain percentage here
-    currentWeather.weather.rainPercentage = 0;
-
+    currentWeather.weather.rainPercentage = calculateAverageRainPercentage(data, currentTime);;
     currentWeather.temp.tempMin = Math.round(weatherObject.temp_min);
     currentWeather.temp.tempMax = Math.round(weatherObject.temp_max);
     currentWeather.time.sunrise = `${(hours12(sunriseTime)).toString()}:${sunriseTime.getMinutes().toString()} ${sunriseTime.getHours() < 11 ? "AM" : "PM"}`;
@@ -70,8 +67,18 @@ async function getCurrentWeather() {
     return currentWeather;
 }
 
-function calculateAverageRainPercentage(date) {
-
+function calculateAverageRainPercentage(weatherData, date) {
+    hourlyDate = weatherData.hourly;
+    var count = 0;
+    var sum = 0;
+    for (var i = 0; i < hourlyDate.length; i++) {
+        var compareDate = new Date(hourlyDate[i].dt * 1000);
+        if (date.getDate() === compareDate.getDate()) {
+            count++;
+            sum += hourlyDate[i].pop * 100;
+        }
+    }
+    return Math.round(sum / count);
 }
 
 function upperCaseString(string) {

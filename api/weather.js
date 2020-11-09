@@ -69,18 +69,17 @@ class Weather {
     async getWeatherDataAll(zipCode, tempMetric) {
 
         let weatherData = await this.getCoords(zipCode, tempMetric);
-
-        let lat = weatherData.coord.lat;
-        let lon = weatherData.coord.lon
         
         let tempWeather = {
+            lat: weatherData.coord.lat,
+            lon: weatherData.coord.lon,
             city: weatherData.name, 
             country: weatherData.sys.country,
             temp_min: weatherData.main.temp_min, 
             temp_max: weatherData.main.temp_max
         }
 
-        let url = `${baseUrlAllWeather}?lat=${lat}&lon=${lon}&units=${tempMetric}${exclude}&appid=${process.env.WEATHER_KEY}`;
+        let url = `${baseUrlAllWeather}?lat=${tempWeather.lat}&lon=${tempWeather.lon}&units=${tempMetric}${exclude}&appid=${process.env.WEATHER_KEY}`;
 
         try {
             let res = await axios(url);
