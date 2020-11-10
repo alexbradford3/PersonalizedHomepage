@@ -27,9 +27,9 @@ var currentWeather = {
 };
 
 async function setData(data, weatherObject) {
-    currentTime = new Date(data.current.dt * 1000);
-    sunriseTime = new Date(data.current.sunrise * 1000);
-    sunsetTime = new Date(data.current.sunset * 1000);
+    var currentTime = new Date(data.current.dt * 1000);
+    var sunriseTime = new Date(data.current.sunrise * 1000);
+    var sunsetTime = new Date(data.current.sunset * 1000);
 
     currentWeather.location.city = weatherObject.city;
     currentWeather.location.country = weatherObject.country;

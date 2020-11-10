@@ -1,5 +1,6 @@
 const axios = require("axios");
 const currentWeatherETL = require("./currentWeatherETL");
+const dailyWeatherETL = require("./dailyWeatherETL");
 
 
 // Configuring the path to read the environment variable file, .env, to get the weather api key
@@ -27,9 +28,7 @@ class Weather {
     }
 
     async getWeatherDataAll(zipCode, tempMetric) {
-
         let weatherData = await this.getCoords(zipCode, tempMetric);
-        
         let tempWeather = {
             lat: weatherData.coord.lat,
             lon: weatherData.coord.lon,
@@ -47,7 +46,14 @@ class Weather {
                 console.log(res.status);
             }
             currentWeatherETL.setData(res.data, tempWeather);
+            dailyWeatherETL.setData(res.data);
             let currentWeather = currentWeatherETL.getCurrentWeather();
+            // let dailyWeather = dailyWeatherETL.getDailyWeather();
+            let weather = {
+                current: currentWeather,
+                // daily: dailyWeather
+            }
+            
             return currentWeather;
         }
         catch (err) {
