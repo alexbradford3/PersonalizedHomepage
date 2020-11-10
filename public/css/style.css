@@ -2,6 +2,10 @@ main {
     padding-bottom: 50px;
 }
 
+body {
+    background-image: linear-gradient(to bottom right, #95cad6, #f4fafb);
+}
+
 .flex-container {
     display: flex;
     flex-wrap: nowrap;
@@ -55,7 +59,7 @@ main {
 }
 
 #current-weather-container {
-    border-radius: 25px;
+    border-radius: 15px;
     margin-top: 10px;
     display: flex;
     align-items: center;
@@ -65,8 +69,52 @@ main {
     padding: 10px;
 }
 
+#daily-weather-container {
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+#search-bar {
+    margin-top: 20px;
+}
+
+.daily-weather {
+    display: flex;
+    flex-flow: row;
+}
+
+.daily-weather div {
+    margin-top: 15px;
+    width: 100%;
+    text-align: center;
+}
+
+.daily-weather div:nth-child(-n+4) {
+    border: 1px solid #787b7d;
+    -webkit-border-image: -webkit-linear-gradient(top, #fff 0%, #575757 50%, #fff 100%)0 100% 0 0 stretch;
+}
+
+.daily-weather-icon {
+    border: none !important;
+}
+
 .blueBackground {
-    background-color: #087195;
+    background-image: linear-gradient(to bottom right, #087195, #3291ac);
+}
+
+.daily-weather-background {
+    background: #fff;
+}
+
+.daily-weather div h3 {
+    color: blue;
+}
+
+.daily-weather div p {
+    color: blue;
 }
 
 #current-weather-abbrev-details p {
@@ -75,4 +123,12 @@ main {
 
 .current-weather-summary {
     padding-top: 1em;
+}
+
+.rain-icon * {
+    margin: 4px;
+}
+
+.rain-icon .wi {
+    font-size: 20px;
 }

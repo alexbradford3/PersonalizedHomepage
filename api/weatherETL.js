@@ -1,35 +1,39 @@
-var currentWeather = {
-    location: {
-        city: String,
-        country: String,
-        lat: Number,
-        lon: Number
+var weather = {
+    current: {
+        location: {
+            city: String,
+            country: String,
+            lat: Number,
+            lon: Number
+        },
+        time: {
+            time: String,
+            timezone: String,
+            sunrise: String,
+            sunset: String,
+            timeOfDay: String
+        },
+        temp: {
+            temperature: Number,
+            feelsLike: Number,
+            tempMin: Number,
+            tempMax: Number,
+        },
+        weather: {
+            id: Number,
+            description: String,
+            windSpeed: String,
+            rainPercentage: Number
+        }
     },
-    time: {
-        time: String,
-        timezone: String,
-        sunrise: String,
-        sunset: String,
-        timeOfDay: String
-    },
-    temp: {
-        temperature: Number,
-        feelsLike: Number,
-        tempMin: Number,
-        tempMax: Number,
-    },
-    weather: {
-        id: Number,
-        description: String,
-        windSpeed: String,
-        rainPercentage: Number
-    }
-};
+    daily: []
+}
 
-async function setData(data, weatherObject) {
+async function setCurrentData(data, weatherObject) {
     var currentTime = new Date(data.current.dt * 1000);
     var sunriseTime = new Date(data.current.sunrise * 1000);
     var sunsetTime = new Date(data.current.sunset * 1000);
+    var currentWeather = weather.current;
 
     currentWeather.location.city = weatherObject.city;
     currentWeather.location.country = weatherObject.country;
@@ -63,8 +67,27 @@ async function setData(data, weatherObject) {
     (currentTime.getTime() < sunriseTime.getTime() || currentTime.getTime() > sunsetTime.getTime()) ? currentWeather.time.timeOfDay = "night" : currentWeather.time.timeOfDay = "day";
 }
 
-async function getCurrentWeather() {
-    return currentWeather;
+async function setDailyData(data) {
+    var dailyWeather = data.daily;
+    weather.daily = [];
+    var dayArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    for (var i = 0; i < 5; i++) {
+        let dailyWeatherData = {};
+        var currentTime = new Date(dailyWeather[i].dt * 1000);
+        var sunriseTime = new Date(dailyWeather[i].sunrise * 1000);
+        var sunsetTime = new Date(dailyWeather[i].sunset * 1000);
+        dailyWeatherData.day = (i == 0) ? null : `${currentTime.getDate()}`;
+        dailyWeatherData.weekDay = (i == 0) ? 'Today': dayArray[currentTime.getDay()];
+        dailyWeatherData.temp_max = Math.round(dailyWeather[i].temp.max);
+        dailyWeatherData.temp_min = Math.round(dailyWeather[i].temp.min);
+        dailyWeatherData.weatherId = dailyWeather[i].weather[0].id;
+        dailyWeatherData.rainPercentage = Math.round(dailyWeather[i].pop * 100);
+        weather.daily.push(dailyWeatherData);
+    }
+}
+
+async function getWeather() {
+    return weather;
 }
 
 function calculateAverageRainPercentage(weatherData, date) {
@@ -95,6 +118,7 @@ function hours12(date) {
 }
     
 module.exports = {
-    setData: setData,
-    getCurrentWeather: getCurrentWeather
+    setCurrentData: setCurrentData,
+    setDailyData: setDailyData,
+    getWeather: getWeather
 }

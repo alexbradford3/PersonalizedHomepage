@@ -1,6 +1,5 @@
 const axios = require("axios");
-const currentWeatherETL = require("./currentWeatherETL");
-const dailyWeatherETL = require("./dailyWeatherETL");
+const weatherETL = require("./weatherETL");
 
 
 // Configuring the path to read the environment variable file, .env, to get the weather api key
@@ -45,16 +44,10 @@ class Weather {
             if (res.status !== 200) {
                 console.log(res.status);
             }
-            currentWeatherETL.setData(res.data, tempWeather);
-            dailyWeatherETL.setData(res.data);
-            let currentWeather = currentWeatherETL.getCurrentWeather();
-            // let dailyWeather = dailyWeatherETL.getDailyWeather();
-            let weather = {
-                current: currentWeather,
-                // daily: dailyWeather
-            }
-            
-            return currentWeather;
+            weatherETL.setCurrentData(res.data, tempWeather);
+            weatherETL.setDailyData(res.data);
+            let weather = weatherETL.getWeather();
+            return weather;
         }
         catch (err) {
             console.error(err);
