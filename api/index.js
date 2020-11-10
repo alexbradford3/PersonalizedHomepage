@@ -6,7 +6,7 @@ const Weather = require("./weather");
 router.get("/weather",  async (req, res) => {
     let weather = new Weather();
     
-    let weatherData = await weather.getWeatherData('02127', "imperial");
+    let weatherData = await weather.getWeatherDataAll('02127', "imperial");
 
     res.header("Content-Type",'application/json');
     res.send(JSON.stringify(weatherData, null, 4));
