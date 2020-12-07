@@ -16,7 +16,7 @@
     "nodemon": "^2.0.6"
   },
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "author": "Alex Bradford",
   "license": "ISC"
