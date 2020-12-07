@@ -4,6 +4,9 @@ main {
 
 body {
     background-image: linear-gradient(to bottom right, #95cad6, #f4fafb);
+    height: 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .flex-container {
