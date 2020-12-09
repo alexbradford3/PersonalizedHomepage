@@ -2,6 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 var path = require('path');
+var wwwhisper = require('connect-wwwhisper');
+
+
+// // Alternatively, if you don't want wwwhisper to insert
+// // a logout iframe into HTML responses use.
+// app.use(wwwhisper(false));
+
 
 
 const app = express();
@@ -15,6 +22,10 @@ app.set('view engine', 'ejs');
 const apis = require('./api');
 app.use("/api", apis);
 app.use("/public", express.static('./public/'));
+
+// app holds a reference to express or connect framework, it
+// may be named differently in your source file.
+app.use(wwwhisper());
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'));
