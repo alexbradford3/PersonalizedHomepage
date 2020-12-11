@@ -28,7 +28,11 @@ app.use("/api", apis);
 app.use("/public", express.static('./public/'));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/index.html'));
+    res.sendFile(path.join(__dirname, '/public/homepage.html'));
+});
+
+app.get('/splitwise', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/splitwise.html'));
 });
 
 app.get('/about', (req, res) => {
