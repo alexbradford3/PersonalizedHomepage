@@ -8,12 +8,6 @@ var upload = multer({ dest: 'uploads/' });
 
 const Weather = require("./weather");
 
-// const Splitwise = require('splitwise');
-// const sw = Splitwise({
-//   consumerKey: 'pQ9EaSCWuI1ConKpr7PwHYjTHbQHvEkQnux51a16',
-//   consumerSecret: 'KoNqOfi3tU2JoYUCXsDi3QIf9xsJo4isWsOTNldm'
-// })
-
 const splitwiseAuthHeader = {
     'Authorization': `Bearer ${process.env.SPLITWISE_KEY}`
 }
