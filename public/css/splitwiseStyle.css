@@ -16,3 +16,8 @@ table, th, td {
 .strikeThrough {
     text-decoration: line-through;
 }
+
+#splitwise-groups {
+    padding-top: 10px;
+    text-align: center;
+}

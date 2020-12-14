@@ -15,6 +15,7 @@ document.querySelector('#spreadsheet-submit').addEventListener('click', function
 
 function displayExpenses(data) {
     buildTable();
+    displaySplitwiseGroups();
     fillTableData(data);
 }
 
@@ -34,9 +35,38 @@ function buildTable() {
     tableDiv.appendChild(table);
 }
 
+function displaySplitwiseGroups() {
+    var splitwiseDiv = document.querySelector('#splitwise-groups');
+    var label = document.createElement('label');
+    label.htmlFor = 'groups';
+    label.innerHTML = 'Select which splitwise group to expense to:';
+
+    var dropdown = document.createElement('select');
+    dropdown.name = 'groups';
+    dropdown.id = 'splitwise-group-dropdown';
+
+    splitwiseDiv.appendChild(label);
+    splitwiseDiv.appendChild(dropdown);
+
+    axios.post("/api/loadSplitwiseGroups").then(d => {
+        populateGroupsDropdown(d.data, dropdown);
+    });
+
+}
+
+function populateGroupsDropdown(data, dropdown) {
+    for (var i = 0; i < data.length; i++) {
+        var option = document.createElement('option');
+        option.id = data[i].id;
+        option.value = data[i].name;
+        option.innerHTML = data[i].name;
+
+        dropdown.appendChild(option);
+    }
+}
+
 function fillTableData(data) {
     var tableDiv = document.getElementById('expense-table');
-    console.log(data);
     for (var i = 0; i < data.length; i++) {
         var row = tableDiv.insertRow();
         createDataRow(data[i], row);
@@ -87,9 +117,25 @@ function deleteRow(deleteCell) {
 }
 
 function expenseRow(rowCell) {
+    var expense = {};
+    var dropdown = document.querySelector('#splitwise-group-dropdown');
     var row = rowCell.parentNode.parentNode.parentNode;
-    for (var i = 0; i < 5; i++) {
-        row.childNodes[i].childNodes[0].childNodes[0].classList.add('strikeThrough');
-    }
-    rowCell.parentNode.parentNode.parentNode.removeChild(rowCell.parentNode.parentNode);
+    var date = new Date(row.childNodes[0].childNodes[0].childNodes[0].value).toISOString();
+    expense.date = date;
+    expense.description = row.childNodes[1].childNodes[0].childNodes[0].value;
+    expense.amount = row.childNodes[2].childNodes[0].childNodes[0].value;
+    expense.note = row.childNodes[4].childNodes[0].childNodes[0].value;
+    expense.groupId = dropdown.options[dropdown.selectedIndex].id;
+    
+    axios.post("/api/createExpense", expense).then(d => {
+        if (d.status == 200) {
+            alert('expense was successfully created');
+            for (var i = 0; i < 5; i++) {
+                row.childNodes[i].childNodes[0].childNodes[0].classList.add('strikeThrough');
+            }
+            rowCell.parentNode.parentNode.parentNode.removeChild(rowCell.parentNode.parentNode);
+        } else {
+            alert('something went wrong :(');
+        }
+    });
 }
