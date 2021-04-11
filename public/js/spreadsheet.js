@@ -21,6 +21,7 @@ document.querySelector('#ynab-submit').addEventListener('click', function(event)
     }
     axios.post("/api/loadYnabExpenses", {dates}).then(d => {
         displayExpenses(d.data, 'ynab')
+        document.querySelector('#expense-all-button').classList.remove('hidden')
     })
 })
 
@@ -97,7 +98,6 @@ function fillTableData(data, formType) {
 }
 
 function createDataRow(expense, row, dataType) {
-    console.log(expense)
     if (dataType == 'csv') {
         var targetKeys = ['Description', 'Date', 'Amount', 'Notes', "Total Amount"];
 
@@ -157,21 +157,24 @@ function deleteRow(deleteCell) {
     row.parentNode.removeChild(row);
 }
 
-function expenseRow(rowCell) {
+function expenseRow(rowCell, skipConfirm) {
     var expense = {};
     var dropdown = document.querySelector('#splitwise-group-dropdown');
     var row = rowCell.parentNode.parentNode.parentNode;
+
     var date = new Date(row.childNodes[0].childNodes[0].childNodes[0].value).toISOString();
     expense.date = date;
     expense.description = row.childNodes[1].childNodes[0].childNodes[0].value;
     expense.owedShare = row.childNodes[2].childNodes[0].childNodes[0].value;
-    expense.note = row.childNodes[4].childNodes[0].childNodes[0].value;
+    expense.note = row.childNodes[3].childNodes[0].childNodes[0].value;
     expense.groupId = dropdown.options[dropdown.selectedIndex].id;
-    expense.totalShare = row.childNodes[5].childNodes[0].childNodes[0].value;
+    expense.totalShare = row.childNodes[4].childNodes[0].childNodes[0].value;
     
     axios.post("/api/createExpense", expense).then(d => {
         if (d.status == 200) {
-            alert('expense was successfully created');
+            if (!skipConfirm) {
+                alert('expense was successfully created');
+            }
             for (var i = 0; i < 5; i++) {
                 row.childNodes[i].childNodes[0].childNodes[0].classList.add('strikeThrough');
             }
@@ -180,4 +183,14 @@ function expenseRow(rowCell) {
             alert('something went wrong :(');
         }
     });
+}
+
+function expenseAll() {
+    var confirmation = confirm('Are you sure you want to expense all current transactions?')
+    if (confirmation) {
+        var table = document.querySelector('#expense-table')
+        for (var i = 1; i < table.childNodes.length; i++) {
+            expenseRow(table.childNodes[i].lastChild.childNodes[0].childNodes[0] , true)
+        }
+    }
 }

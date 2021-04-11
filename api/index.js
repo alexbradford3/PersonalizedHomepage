@@ -42,7 +42,6 @@ router.post('/loadCSVExpenses', upload.single('expenseFile'), (req, res) => {
 
 router.post('/loadYnabExpenses', (req, res) => {
     let ynab = new Ynab();
-    console.log(req.body);
 
     ynab.getTransactions().then(transactions => {
         ynab.filterTransactions(transactions, req.body.dates).then(finalTransactions => {
@@ -71,22 +70,29 @@ router.post('/loadSplitwiseGroups', (req, res) => {
 router.post('/createExpense', (req, res) => {
     var data = req.body;
     var expenseParams = {
-        cost: data.amount,
-        description: data.description,
+        cost: Math.abs(data.totalShare),
+        description: data.note,
         group_id: data.groupId,
         date: data.date,
-        details: data.note
+        users__0__first_name: 'Alex',
+        users__0__last_name: 'Bradford',
+        users__0__email: 'alex.bradford417@gmail.com',
+        users__1__first_name: 'Megan',
+        users__1__last_name: 'Greeley',
+        users__1__email: 'mjgreeley93@gmail.com',
     }
-    if (data.totalShare == data.owedShare) {
-        expenseParams.split_equally = true
+    if (data.totalShare > 0) {
+        expenseParams.users__0__paid_share = 0
+        expenseParams.users__0__owed_share = data.owedShare
+        expenseParams.users__1__paid_share = data.totalShare
+        expenseParams.users__1__owed_share = data.totalShare - data.owedShare
     } else {
-        expenseParams.user_0_last_name = 'Bradford'
-        expenseParams.user_0_paid_share = data.totalShare
-        expenseParams.user_0_owed_share = data.totalShare - data.owedShare
-        expenseParams.user_1_last_name = 'Greeley'
-        expenseParams.user_1_paid_share = 0
-        expenseParams.user_1_owed_share = data.owedShare
-    }
+        expenseParams.users__0__paid_share = Math.abs(data.totalShare)
+        expenseParams.users__0__owed_share = Math.abs(data.totalShare - data.owedShare)
+        expenseParams.users__1__paid_share = 0
+        expenseParams.users__1__owed_share = Math.abs(data.owedShare)
+    }  
+        
     axios.post('https://secure.splitwise.com/api/v3.0/create_expense', null, {
         params: expenseParams,
         headers: splitwiseAuthHeader}).then(response => {

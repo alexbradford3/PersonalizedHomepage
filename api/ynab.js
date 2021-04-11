@@ -40,11 +40,12 @@ class Ynab {
                     if (transactionList[i].subtransactions[j].category_name == 'Splitwise Transactions') {
                         // Checks if it is an expense I've created to track what I owe Megan
                         if (!(transactionList[i].memo.substring(0, 3) == 'DNE')) {
-                            transactionList[i].subtransactions[j].memo = transactionList[i].memo
-                            transactionList[i].subtransactions[j].date = transactionList[i].date
-                            transactionList[i].subtransactions[j].payee_name = transactionList[i].payee_name
-                            transactionList[i].subtransactions[j].amount = Math.abs(transactionList[i].subtransactions[j].amount / 1000)
-                            transactionList[i].subtransactions[j].total_cost = Math.abs(transactionList[i].amount / 1000)
+                            // transactionList[i].subtransactions[j].memo = transactionList[i].memo
+                            // transactionList[i].subtransactions[j].date = transactionList[i].date
+                            // transactionList[i].subtransactions[j].payee_name = transactionList[i].payee_name
+                            // transactionList[i].subtransactions[j].amount = Math.abs(transactionList[i].subtransactions[j].amount / 1000)
+                            // transactionList[i].subtransactions[j].total_cost = Math.abs(transactionList[i].amount / 1000)
+                            let tempTrans = this.createRefinedTransaction(transactionList[i], transactionList[i].subtransactions[j])
                             finalTransactions.push(transactionList[i].subtransactions[j])
                         }
                         
@@ -52,8 +53,16 @@ class Ynab {
                 }
             }
         }
-        console.log(finalTransactions)
         return finalTransactions
+    }
+
+    createRefinedTransaction(parent, child) {
+        child.memo = parent.memo
+        child.date = parent.date
+        child.payee_name = parent.payee_name
+        child.amount = child.amount / 1000
+        child.total_cost = parent.amount / 1000
+        return child
     }
 }
 
