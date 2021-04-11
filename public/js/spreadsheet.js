@@ -4,19 +4,41 @@ document.querySelector('#spreadsheet-submit').addEventListener('click', function
     var formData = new FormData(); 
     var csv = document.getElementById('expenseFile').files[0];
     formData.append("expenseFile", csv); 
-    axios.post("/api/loadExpenses", formData, {
+    axios.post("/api/loadCSVExpenses", formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
     }).then(d => {
-        displayExpenses(d.data);
+        displayExpenses(d.data, 'csv');
     });
 });
 
-function displayExpenses(data) {
+document.querySelector('#ynab-submit').addEventListener('click', function(event) {
+    event.preventDefault();
+    var dates = {
+        startDate: document.querySelector('#start').value,
+        endDate: document.querySelector('#end').value
+    }
+    axios.post("/api/loadYnabExpenses", {dates}).then(d => {
+        displayExpenses(d.data, 'ynab')
+    })
+})
+
+var formSwitch = document.querySelector('.switch-input')
+formSwitch.onchange = function() {
+    if (formSwitch.checked) {
+        document.querySelector('#csv-form').classList.remove('hidden')
+        document.querySelector('#ynab-form').classList.add('hidden')
+    } else {
+        document.querySelector('#csv-form').classList.add('hidden')
+        document.querySelector('#ynab-form').classList.remove('hidden')
+    }
+}
+
+function displayExpenses(data, formType) {
     buildTable();
     displaySplitwiseGroups();
-    fillTableData(data);
+    fillTableData(data, formType);
 }
 
 function buildTable() {
@@ -24,7 +46,7 @@ function buildTable() {
     var table = document.createElement('table');
     table.setAttribute('id', 'expense-table');
     var headingRow = document.createElement('tr');
-    var headings = ['Date', 'Company', 'Amount', 'Category', 'Note'];
+    var headings = ['Date', 'Company', 'Splitwise Amount', 'Note', 'Total Amount'];
     for (var i = 0; i < headings.length; i++) {
         var heading = document.createElement('th');
         var headingText = document.createTextNode(headings[i]);
@@ -65,21 +87,39 @@ function populateGroupsDropdown(data, dropdown) {
     }
 }
 
-function fillTableData(data) {
+function fillTableData(data, formType) {
     var tableDiv = document.getElementById('expense-table');
     for (var i = 0; i < data.length; i++) {
         var row = tableDiv.insertRow();
-        createDataRow(data[i], row);
+        createDataRow(data[i], row, formType);
         tableDiv.appendChild(row);
     }
 }
 
-function createDataRow(expense, row) {
-    var targetKeys = ['Description', 'Date', 'Category', 'Amount', 'Notes'];
-    for (key in expense) {
-        if (targetKeys.includes(key)) {
+function createDataRow(expense, row, dataType) {
+    console.log(expense)
+    if (dataType == 'csv') {
+        var targetKeys = ['Description', 'Date', 'Amount', 'Notes', "Total Amount"];
+
+        for (key in expense) {
+            if (targetKeys.includes(key)) {
+                var cell = row.insertCell();
+                var textValue = expense[key];
+                var form = document.createElement('form');
+                var input = document.createElement('input');
+                input.type = 'text';
+                input.setAttribute('value', textValue);
+                form.appendChild(input);
+                cell.appendChild(form);
+                cell.classList.add('centered');
+            }
+        }
+    } else {
+        var targetKeys = ['date', 'payee_name', 'amount', 'memo', 'total_cost']
+
+        for (var i = 0; i < targetKeys.length; i++) {
             var cell = row.insertCell();
-            var textValue = expense[key];
+            var textValue = expense[targetKeys[i]];
             var form = document.createElement('form');
             var input = document.createElement('input');
             input.type = 'text';
@@ -89,6 +129,7 @@ function createDataRow(expense, row) {
             cell.classList.add('centered');
         }
     }
+    
 
     addButtonForm(row, 'delete');
     addButtonForm(row, 'expense');
@@ -123,9 +164,10 @@ function expenseRow(rowCell) {
     var date = new Date(row.childNodes[0].childNodes[0].childNodes[0].value).toISOString();
     expense.date = date;
     expense.description = row.childNodes[1].childNodes[0].childNodes[0].value;
-    expense.amount = row.childNodes[2].childNodes[0].childNodes[0].value;
+    expense.owedShare = row.childNodes[2].childNodes[0].childNodes[0].value;
     expense.note = row.childNodes[4].childNodes[0].childNodes[0].value;
     expense.groupId = dropdown.options[dropdown.selectedIndex].id;
+    expense.totalShare = row.childNodes[5].childNodes[0].childNodes[0].value;
     
     axios.post("/api/createExpense", expense).then(d => {
         if (d.status == 200) {

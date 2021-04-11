@@ -1,12 +1,12 @@
-const axios = require("axios");
-const weatherETL = require("./weatherETL");
+const axios = require('axios');
+const weatherETL = require('./weatherETL');
 
 
 // Configuring the path to read the environment variable file, .env, to get the weather api key
-require('dotenv').config({path: "./../../../.env"});
+require('dotenv').config({path: './../../../.env'});
 
-const baseUrlWeather = "http://api.openweathermap.org/data/2.5/weather";
-const baseUrlAllWeather = "https://api.openweathermap.org/data/2.5/onecall";
+const baseUrlWeather = 'http://api.openweathermap.org/data/2.5/weather';
+const baseUrlAllWeather = 'https://api.openweathermap.org/data/2.5/onecall';
 const exclude = '&exclude=minutely,alerts';
 
 class Weather {

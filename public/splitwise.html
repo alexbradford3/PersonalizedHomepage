@@ -34,10 +34,30 @@
 
     <main>
         <div class="container">
-            <form id="spreadsheet-upload" enctype="multipart/form-data">
-                <input type="file" id="expenseFile" name="expenseFile">
-                <input type="submit" id="spreadsheet-submit">
-            </form>
+          <label class="switch">
+            <input class="switch-input" type="checkbox" />
+            <span class="switch-label" data-on="CSV" data-off="YNAB"></span> 
+            <span class="switch-handle"></span> 
+          </label>
+        </div>
+
+        <div class="container hidden" id="csv-form">
+          <form id="spreadsheet-upload" enctype="multipart/form-data">
+              <input type="file" id="expenseFile" name="expenseFile">
+              <input type="submit" id="spreadsheet-submit">
+          </form>
+        </div>
+
+        <div class="container" id="ynab-form">
+          <form id="spreadsheet-upload" enctype="multipart/form-data">
+            <label for="start">Start date:</label>
+            <input type="date" id="start" name="budget-start">
+
+            <label for="start">End date:</label>
+            <input type="date" id="end" name="budget-end">
+
+            <input type="submit" id="ynab-submit">
+          </form>
         </div>
 
         <div id="splitwise-groups">

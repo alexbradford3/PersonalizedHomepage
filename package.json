@@ -12,7 +12,8 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "multer": "^1.4.2",
-    "node-ejs": "^1.2.3"
+    "node-ejs": "^1.2.3",
+    "ynab": "^1.23.0"
   },
   "devDependencies": {
     "concurrently": "^5.3.0",

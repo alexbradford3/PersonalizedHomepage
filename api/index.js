@@ -6,7 +6,9 @@ var multer  = require('multer');
 const csv = require('csvtojson');
 var upload = multer({ dest: 'uploads/' });
 
-const Weather = require("./weather");
+const Weather = require('./weather');
+const Splitwise = require('./splitwise');
+const Ynab = require('./ynab');
 
 const splitwiseAuthHeader = {
     'Authorization': `Bearer ${process.env.SPLITWISE_KEY}`
@@ -29,8 +31,8 @@ router.post("/weather",  async (req, res) => {
     res.send(JSON.stringify(weatherData, null, 4));
 });
 
-router.post('/loadExpenses', upload.single('expenseFile'), (req, res) => {
-    var expenseFile;
+router.post('/loadCSVExpenses', upload.single('expenseFile'), (req, res) => {
+    var expenseFile;  
     csv()
     .fromFile(req.file.path)
     .then((expenseFile) => {
@@ -38,45 +40,55 @@ router.post('/loadExpenses', upload.single('expenseFile'), (req, res) => {
     })
 });
 
-router.post('/loadSplitwiseGroups', (req, res) => {
-    // sw.getGroups().then((groupData) => {
-    //     var refinedGroupData = [];
-    //     for (var i = 0; i < groupData.length; i++) {
-    //         var object = {};
-    //         object.name = groupData[i].name;
-    //         object.id = groupData[i].id;
-    //         refinedGroupData.push(object);
-    //     }
-    //     // console.log(refinedGroupData);
-    //     res.send(refinedGroupData);
-    // });
+router.post('/loadYnabExpenses', (req, res) => {
+    let ynab = new Ynab();
+    console.log(req.body);
 
-    axios.get("https://www.splitwise.com/api/v3.0/get_groups", {headers: splitwiseAuthHeader}).then(response => {
-        var groupData = response.data.groups;
-        // console.log(groupData);
+    ynab.getTransactions().then(transactions => {
+        ynab.filterTransactions(transactions, req.body.dates).then(finalTransactions => {
+            res.send(finalTransactions)
+        })
+    })
+})
+
+router.post('/loadSplitwiseGroups', (req, res) => {
+    let sw = new Splitwise();
+
+    sw.getGroups().then(groups => {
         var refinedGroupData = [];
-        for (var i = 0; i < groupData.length; i++) {
+        for (var i = 0; i < groups.length; i++) {
             var object = {};
-            object.name = groupData[i].name;
-            object.id = groupData[i].id;
+            object.name = groups[i].name;
+            object.id = groups[i].id;
             refinedGroupData.push(object);
         }
-        // console.log(refinedGroupData);
         res.send(refinedGroupData);
     });
+    
+
 });
 
 router.post('/createExpense', (req, res) => {
     var data = req.body;
+    var expenseParams = {
+        cost: data.amount,
+        description: data.description,
+        group_id: data.groupId,
+        date: data.date,
+        details: data.note
+    }
+    if (data.totalShare == data.owedShare) {
+        expenseParams.split_equally = true
+    } else {
+        expenseParams.user_0_last_name = 'Bradford'
+        expenseParams.user_0_paid_share = data.totalShare
+        expenseParams.user_0_owed_share = data.totalShare - data.owedShare
+        expenseParams.user_1_last_name = 'Greeley'
+        expenseParams.user_1_paid_share = 0
+        expenseParams.user_1_owed_share = data.owedShare
+    }
     axios.post('https://secure.splitwise.com/api/v3.0/create_expense', null, {
-        params: {
-            cost: data.amount,
-            description: data.description,
-            group_id: data.groupId,
-            split_equally: true,
-            date: data.date,
-            details: data.note
-        },
+        params: expenseParams,
         headers: splitwiseAuthHeader}).then(response => {
            if (!response.data.errors) {
                res.sendStatus(200);
@@ -84,32 +96,6 @@ router.post('/createExpense', (req, res) => {
                res.send(response.data.errors);
            }
     });
-    
-    // var data = req.body;
-    // console.log(data);
-    // sw.getGroup({id: req.body.groupId}).then((groupData) => {
-    //     console.log(groupData);
-    //     var selfId;
-    //     var targetId;
-    //     for (var i = 0; i < groupData.members.length; i++) {
-    //         if (groupData.members[i].first_name == 'Alex') {
-    //             selfId = groupData.members[i].id;
-    //         } else if (groupData.members[i].first_name == 'Megan') {
-    //             targetId = groupData.members[i].id
-    //         }
-    //     }
-
-    //     console.log(targetId);
-        
-    //     sw.createDebt({
-    //         from: selfId,
-    //         to: targetId,
-    //         amount: data.amount,
-    //         description: data.description,
-    //         group_id: data.groupId
-    //     }).then(res.send('success'));
-    // });
-    
 });
 
 module.exports = router;
