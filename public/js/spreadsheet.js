@@ -162,7 +162,9 @@ function expenseRow(rowCell, skipConfirm) {
     var dropdown = document.querySelector('#splitwise-group-dropdown');
     var row = rowCell.parentNode.parentNode.parentNode;
 
-    var date = new Date(row.childNodes[0].childNodes[0].childNodes[0].value).toISOString();
+    var date = new Date(row.childNodes[0].childNodes[0].childNodes[0].value)
+    date.setSeconds(date.getSeconds() + 10)
+    date.toISOString();
     expense.date = date;
     expense.description = row.childNodes[1].childNodes[0].childNodes[0].value;
     expense.owedShare = row.childNodes[2].childNodes[0].childNodes[0].value;
@@ -171,9 +173,13 @@ function expenseRow(rowCell, skipConfirm) {
     expense.totalShare = row.childNodes[4].childNodes[0].childNodes[0].value;
     
     axios.post("/api/createExpense", expense).then(d => {
-        if (d.status == 200) {
-            if (!skipConfirm) {
-                alert('expense was successfully created');
+        if (d.status == 200 || d.status == 204) {
+            if (d.status == 200) {
+                if (!skipConfirm) {
+                    alert('expense was successfully created');
+                } 
+            } else if (d.status == 204) {
+                alert('expense has already been submitted');
             }
             for (var i = 0; i < 5; i++) {
                 row.childNodes[i].childNodes[0].childNodes[0].classList.add('strikeThrough');

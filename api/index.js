@@ -68,6 +68,7 @@ router.post('/loadSplitwiseGroups', (req, res) => {
 });
 
 router.post('/createExpense', (req, res) => {
+    let sw = new Splitwise();
     var data = req.body;
     var expenseParams = {
         cost: Math.abs(data.totalShare),
@@ -92,16 +93,24 @@ router.post('/createExpense', (req, res) => {
         expenseParams.users__1__paid_share = 0
         expenseParams.users__1__owed_share = Math.abs(data.owedShare)
     }  
-        
-    axios.post('https://secure.splitwise.com/api/v3.0/create_expense', null, {
-        params: expenseParams,
-        headers: splitwiseAuthHeader}).then(response => {
-           if (!response.data.errors) {
-               res.sendStatus(200);
-           } else {
-               res.send(response.data.errors);
-           }
-    });
+       
+    sw.getExpenses(expenseParams.group_id, expenseParams.date).then(() => {
+        sw.compareExpenses(expenseParams).then((expenseFound) => {
+            if (!expenseFound) {
+                axios.post('https://secure.splitwise.com/api/v3.0/create_expense', null, {
+                params: expenseParams,
+                headers: splitwiseAuthHeader}).then(response => {
+                if (!response.data.errors) {
+                    res.sendStatus(200);
+                } else {
+                    res.send(response.data.errors);
+                }
+                });
+            } else {
+                res.send(204);
+            }
+        })
+    })
 });
 
 module.exports = router;

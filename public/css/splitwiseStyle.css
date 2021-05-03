@@ -11,8 +11,12 @@ body {
 }
 
 table, th, td {
-    border: 1px solid black;
+    /* border: 1px solid black; */
 }
+
+/* input[type=date] {
+	width: 150px;
+} */
 
 .hidden {
     display:none;
@@ -55,7 +59,8 @@ table, th, td {
 	height: inherit;
 	font-size: 10px;
 	text-transform: uppercase;
-	background: #eceeef;
+	background: #1dc29f;
+	/* background: #eceeef; */
 	border-radius: inherit;
 	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
 	box-sizing:content-box;
@@ -74,18 +79,21 @@ table, th, td {
 .switch-label:before {
 	content: attr(data-off);
 	right: 11px;
-	color: #aaaaaa;
+	/* color: #aaaaaa; */
+	color: #FFFFFF;
 	text-shadow: 0 1px rgba(255, 255, 255, 0.5);
 }
 .switch-label:after {
 	content: attr(data-on);
 	left: 11px;
-	color: #FFFFFF;
+	color: #aaaaaa;
+	/* color: #FFFFFF; */
 	text-shadow: 0 1px rgba(0, 0, 0, 0.2);
 	opacity: 0;
 }
 .switch-input:checked ~ .switch-label {
-	background: #1dc29f;
+	background: #eceeef;
+	/* background: #1dc29f; */
 	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2);
 }
 .switch-input:checked ~ .switch-label:before {

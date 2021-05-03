@@ -28,19 +28,18 @@
                 <a class="nav-link" href="splitwise">Splitwise </a>
               </li>
             </ul>
+            <div>
+              <label class="switch">
+                <input class="switch-input" type="checkbox" />
+                <span class="switch-label" data-on="CSV" data-off="YNAB"></span> 
+                <span class="switch-handle"></span> 
+              </label>
+            </div>
           </div>
         </nav>
     </header>
 
     <main>
-        <div class="container">
-          <label class="switch">
-            <input class="switch-input" type="checkbox" />
-            <span class="switch-label" data-on="CSV" data-off="YNAB"></span> 
-            <span class="switch-handle"></span> 
-          </label>
-        </div>
-
         <div class="container hidden" id="csv-form">
           <form id="spreadsheet-upload" enctype="multipart/form-data">
               <input type="file" id="expenseFile" name="expenseFile">
@@ -50,16 +49,36 @@
 
         <div class="container" id="ynab-form">
           <form id="spreadsheet-upload" enctype="multipart/form-data">
-            <label for="start">Start date:</label>
+            <h5>Pick your start and end dates for transactions</h6>
+            <label for="start">Start:</label>
             <input type="date" id="start" name="budget-start">
 
-            <label for="start">End date:</label>
+            <label for="start">End:</label>
             <input type="date" id="end" name="budget-end">
 
             <input type="submit" id="ynab-submit">
             <input class="hidden" type="button" value="Expense All" id="expense-all-button" onclick="expenseAll()">
           </form>
         </div>
+        <!-- <form class="row row-cols-lg-auto g-3 align-items-center">
+          <div class="">
+            <label class="visually-hidden" for="start">Start Date</label>
+            <div class="input-group">
+              <input type="date" class="form-control" id="start"ß>
+            </div>
+          </div>
+        
+          <div class="">
+            <label class="visually-hidden" for="end">End Date</label>
+            <div class="input-group">
+              <input type="date" class="form-control" id="end">
+            </div>
+          </div>
+        
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary" id="ynab-submit">Submit</button>
+          </div>
+        </form> -->
 
         <div id="splitwise-groups">
         </div>
